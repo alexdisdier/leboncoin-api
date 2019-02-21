@@ -82,7 +82,10 @@ router.get("/offer/with-count", async (req, res) => {
         }
       }
 
-      const search = await Offer.find(filters).populate("User");
+      const search = await Offer.find(filters)
+        .populate("User")
+        .skip(Number(req.query.skip))
+        .limit(Number(req.query.limit));
 
       // Sorting the offers
       if (req.query.sort === "price-asc") {
