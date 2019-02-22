@@ -7,12 +7,10 @@ const mongoose = require("mongoose");
 const compression = require("compression");
 const helmet = require("helmet");
 const cors = require("cors");
-const SHA256 = require("crypto-js/sha256");
-const encBase64 = require("crypto-js/enc-base64");
-const uid2 = require("uid2");
 
 app.use(helmet());
 app.use(bodyParser.json());
+app.use(cors());
 
 /////////////////////////
 // DATABASE CONNECTION //

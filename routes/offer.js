@@ -8,9 +8,23 @@ const router = express.Router();
 const Offer = require("../models/offer");
 const User = require("../models/user");
 
+// FUNCTIONS
+
+const searchOffer = async (req, res, next) => {
+  try {
+    const offerId = req.params.id;
+    offer = await Offer.findById(offerId);
+    next();
+  } catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+};
+
 // CREATE
 // params body: title, description, price, creator (family id of the attributed creator)
-router.post("/offer/create", async (req, res) => {
+router.post("/offer/publish", async (req, res) => {
   try {
     const title = req.body.title;
     const description = req.body.description;
@@ -34,12 +48,12 @@ router.post("/offer/create", async (req, res) => {
 });
 
 // READ no count
+// params get: id of offer
 router.get("/offer", async (req, res) => {
   try {
     const offers = await Offer.find();
-    const count = await Offer.countDocuments();
 
-    if (count.length > 0) {
+    if (offers.length > 0) {
       console.log(offers);
       res.send(offers);
     } else {
@@ -47,6 +61,25 @@ router.get("/offer", async (req, res) => {
         message: "no offers in database"
       });
     }
+  } catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+});
+
+// READ no count
+// params get: :id of offer
+router.get("/offer/:id", searchOffer, (req, res) => {
+  try {
+    if (offer) {
+      res.send(offer);
+    } else {
+      res.send({
+        message: "no offer with this id"
+      });
+    }
+    console.log(offer);
   } catch (error) {
     res.status(400).json({
       error: error.message
@@ -88,28 +121,34 @@ router.get("/offer/with-count", async (req, res) => {
         .limit(Number(req.query.limit));
 
       // Sorting the offers
-      if (req.query.sort === "price-asc") {
-        search.sort({
-          price: 1
-        });
-      } else if (req.query.sort === "price-desc") {
-        search.sort({
-          price: -1
-        });
-      }
+      // console.log(req.query.sort);
+      // if (req.query.sort === "price-asc") {
+      //   console.log("first condition");
+      //   search.sort({
+      //     price: 1
+      //   });
+      //   console.log("end of first condition");
+      // } else if (req.query.sort === "price-desc") {
+      //   search.sort({
+      //     price: -1
+      //   });
+      // }
 
-      if (req.query.sort === "rating-asc") {
-        search.sort({
-          averageRating: 1
-        });
-      } else if (req.query.sort === "rating-desc") {
-        search.sort({
-          averageRating: -1
-        });
-      }
+      // if (req.query.sort === "date-asc") {
+      //   search.sort({
+      //     date: 1
+      //   });
+      // } else if (req.query.sort === "date-desc") {
+      //   search.sort({
+      //     date: -1
+      //   });
+      // }
+
+      const offers = await search;
+
       res.json({
-        count: search.length,
-        offers: search
+        count: offers.length,
+        offers: offers
       });
     } else {
       res.send({

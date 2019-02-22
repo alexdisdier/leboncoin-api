@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
 
 const User = mongoose.model("User", {
+  token: {
+    type: String,
+    maxLength: 17,
+    required: true
+  },
+  salt: {
+    type: String,
+    maxLength: 17,
+    required: true
+  },
   username: {
     type: String,
     minLength: 1,
