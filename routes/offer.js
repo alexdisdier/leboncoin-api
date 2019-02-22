@@ -5,41 +5,46 @@
 const express = require("express");
 const router = express.Router();
 
+const uploadPictures = require("../middlewares/uploadPictures");
+
 const Offer = require("../models/offer");
 const User = require("../models/user");
 
-// FUNCTIONS
-
-const searchOffer = async (req, res, next) => {
-  try {
-    const offerId = req.params.id;
-    offer = await Offer.findById(offerId);
-    next();
-  } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
-  }
-};
-
 // CREATE
-// params body: title, description, price, creator (family id of the attributed creator)
-router.post("/offer/publish", async (req, res) => {
+// params body: title, description, price
+router.post("/offer/publish", uploadPictures, async (req, res) => {
   try {
-    const title = req.body.title;
-    const description = req.body.description;
-    const price = req.body.price;
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.replace("Bearer ", "");
+      const title = req.body.title;
+      const description = req.body.description;
+      const price = req.body.price;
+      const user = await User.findOne({ token: token });
+      const pictures = req.pictures;
 
-    const offer = new Offer({
-      title: title,
-      description: description,
-      price: price
-    });
+      const offer = new Offer({
+        title: title,
+        description: description,
+        price: price,
+        pictures: pictures,
+        creator: user
+      });
 
-    await offer.save();
-    res.send({
-      message: "success"
-    });
+      await offer.save();
+
+      res.send({
+        _id: offer._id,
+        title: offer.title,
+        description: offer.description,
+        price: offer.price,
+        pictures: offer.pictures,
+        creator: {
+          account: user.account,
+          _id: user._id
+        },
+        created: offer.created
+      });
+    }
   } catch (error) {
     res.status(400).json({
       message: error.message
@@ -116,8 +121,8 @@ router.get("/offer/with-count", async (req, res) => {
           return a.date - b.date;
         });
       } else if (req.query.sort === "date-desc") {
-        search.sort({
-          date: -1
+        search.sort((a, b) => {
+          return b.date - a.date;
         });
       }
 
@@ -141,8 +146,15 @@ router.get("/offer/with-count", async (req, res) => {
 
 // READ no count
 // params get: :id of offer
-router.get("/offer/:id", searchOffer, (req, res) => {
+router.get("/offer/:id", async (req, res) => {
   try {
+    const offerId = req.params.id;
+    offer = await Offer.findById(offerId).populate({
+      path: "creator",
+      model: "User",
+      select: { account: 1 }
+    });
+
     if (offer) {
       res.send(offer);
     } else {

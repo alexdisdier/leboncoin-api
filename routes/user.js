@@ -17,6 +17,7 @@ router.post("/user/sign_up", async (req, res) => {
     const email = req.body.email;
     const username = req.body.username;
     const password = req.body.password;
+    const phone = req.body.phone;
 
     const token = uid2(16); // MaxLengh in user model set to 17.
     const salt = uid2(16); // MaxLengh in user model set to 17.
@@ -24,20 +25,20 @@ router.post("/user/sign_up", async (req, res) => {
 
     if ((email || username) && password) {
       const user = new User({
-        token: "kjag;dag",
-        salt: salt,
-        username: username,
         email: email,
-        password: hash
+        token: token,
+        salt: salt,
+        hash: hash,
+        account: {
+          username: username,
+          phone: phone
+        }
       });
       await user.save();
       res.json({
         _id: user._id,
-        token: token,
-        account: {
-          username: username,
-          email: email
-        }
+        token: user.token,
+        account: user.account
       });
     }
   } catch (error) {
@@ -51,7 +52,7 @@ router.post("/user/sign_up", async (req, res) => {
 router.get("/user", async (req, res) => {
   try {
     const users = await User.find();
-    const count = await User.count();
+    const count = await User.countDocuments();
 
     if (count > 0) {
       res.json({
@@ -77,16 +78,16 @@ router.post("/user/log_in", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    const user = await User.find({ email: email });
+    const user = await User.findOne({ email: email });
 
     if (SHA256(password + user.salt).toStringBase64 === user.hash) {
-      console.log(user[0]);
+      console.log(user);
       res.send({
-        _id: user[0]._id,
-        token: user[0].token,
+        _id: user._id,
+        token: user.token,
         account: {
-          username: user[0].username,
-          email: user[0].email
+          username: user.username,
+          email: user.email
         }
       });
     } else {

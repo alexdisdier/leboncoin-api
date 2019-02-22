@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Offer = mongoose.model("Offer", {
   title: {
     type: String,
-    minLength: 5,
+    minLength: 1,
     maxLength: 25,
     required: true
   },
@@ -16,9 +16,9 @@ const Offer = mongoose.model("Offer", {
   },
   price: {
     type: Number,
-    required: true,
+    min: 0,
     default: 0,
-    min: 0
+    required: true
   },
   pictures: {
     type: Array,
@@ -27,7 +27,8 @@ const Offer = mongoose.model("Offer", {
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true
   },
   created: {
     type: Date,
