@@ -80,13 +80,13 @@ router.post("/user/log_in", async (req, res) => {
     const user = await User.find({ email: email });
 
     if (SHA256(password + user.salt).toStringBase64 === user.hash) {
-      console.log("true");
+      console.log(user[0]);
       res.send({
-        _id: user.id,
-        token: user.token,
+        _id: user[0]._id,
+        token: user[0].token,
         account: {
-          username: user.username,
-          email: user.email
+          username: user[0].username,
+          email: user[0].email
         }
       });
     } else {

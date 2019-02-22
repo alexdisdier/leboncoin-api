@@ -54,32 +54,12 @@ router.get("/offer", async (req, res) => {
     const offers = await Offer.find();
 
     if (offers.length > 0) {
-      console.log(offers);
       res.send(offers);
     } else {
       res.send({
         message: "no offers in database"
       });
     }
-  } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
-  }
-});
-
-// READ no count
-// params get: :id of offer
-router.get("/offer/:id", searchOffer, (req, res) => {
-  try {
-    if (offer) {
-      res.send(offer);
-    } else {
-      res.send({
-        message: "no offer with this id"
-      });
-    }
-    console.log(offer);
   } catch (error) {
     res.status(400).json({
       error: error.message
@@ -121,28 +101,25 @@ router.get("/offer/with-count", async (req, res) => {
         .limit(Number(req.query.limit));
 
       // Sorting the offers
-      // console.log(req.query.sort);
-      // if (req.query.sort === "price-asc") {
-      //   console.log("first condition");
-      //   search.sort({
-      //     price: 1
-      //   });
-      //   console.log("end of first condition");
-      // } else if (req.query.sort === "price-desc") {
-      //   search.sort({
-      //     price: -1
-      //   });
-      // }
+      if (req.query.sort === "price-asc") {
+        search.sort((a, b) => {
+          return a.price - b.price;
+        });
+      } else if (req.query.sort === "price-desc") {
+        search.sort((a, b) => {
+          return b.price - a.price;
+        });
+      }
 
-      // if (req.query.sort === "date-asc") {
-      //   search.sort({
-      //     date: 1
-      //   });
-      // } else if (req.query.sort === "date-desc") {
-      //   search.sort({
-      //     date: -1
-      //   });
-      // }
+      if (req.query.sort === "date-asc") {
+        search.sort((a, b) => {
+          return a.date - b.date;
+        });
+      } else if (req.query.sort === "date-desc") {
+        search.sort({
+          date: -1
+        });
+      }
 
       const offers = await search;
 
@@ -155,6 +132,25 @@ router.get("/offer/with-count", async (req, res) => {
         message: "no offers in database"
       });
     }
+  } catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+});
+
+// READ no count
+// params get: :id of offer
+router.get("/offer/:id", searchOffer, (req, res) => {
+  try {
+    if (offer) {
+      res.send(offer);
+    } else {
+      res.send({
+        message: "no offer with this id"
+      });
+    }
+    console.log(offer);
   } catch (error) {
     res.status(400).json({
       error: error.message
