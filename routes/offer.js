@@ -6,6 +6,7 @@ const express = require("express");
 const router = express.Router();
 var isAuthenticated = require("../middlewares/isAuthenticated");
 const uploadPictures = require("../middlewares/uploadPictures");
+var ObjectId = require("mongoose").Types.ObjectId;
 
 const Offer = require("../models/offer");
 
@@ -144,7 +145,7 @@ router.get("/offer/with-count", async (req, res) => {
 });
 
 // READ no count
-// params get: :id of offer
+// req.params.id of offer
 router.get("/offer/:id", async (req, res) => {
   try {
     const offerId = req.params.id;
@@ -167,6 +168,28 @@ router.get("/offer/:id", async (req, res) => {
       error: error.message
     });
   }
+});
+
+// DELETE
+// params req.params.id of offer and req.header.authorization (user token)
+router.delete("/delete/:id", isAuthenticated, function(req, res, next) {
+  Offer.findOneAndDelete(
+    {
+      _id: ObjectId(req.params.id),
+      creator: req.user
+    },
+    function(err, obj) {
+      if (err) {
+        return next(err.message);
+      }
+      if (!obj) {
+        res.status(404);
+        return next("Nothing to delete");
+      } else {
+        return res.json({ message: "Deleted" });
+      }
+    }
+  );
 });
 
 module.exports = router;
