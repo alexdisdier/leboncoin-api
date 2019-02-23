@@ -9,8 +9,9 @@ const helmet = require("helmet");
 const cors = require("cors");
 
 app.use(helmet());
-app.use(bodyParser.json());
-app.use(cors());
+app.use(compression());
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use("/", cors());
 
 /////////////////////////
 // DATABASE CONNECTION //
@@ -41,7 +42,13 @@ app.use(user);
 /////////////////////
 
 app.all("*", function(req, res) {
-  res.status(400).send("Page not found");
+  res.status(404).send("Page not found");
+});
+
+app.use(function(err, req, res, next) {
+  if (res.statusCode === 200) res.status(400);
+  console.log(err);
+  res.json({ error: err });
 });
 
 app.listen(3001, () => {

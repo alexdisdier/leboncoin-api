@@ -12,7 +12,7 @@ const User = require("../models/user");
 
 // CREATE
 // params body: title, description, price
-router.post("/offer/publish", uploadPictures, async (req, res) => {
+router.post("/publish", uploadPictures, async (req, res) => {
   try {
     if (req.headers.authorization) {
       const token = req.headers.authorization.replace("Bearer ", "");
