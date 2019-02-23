@@ -60,11 +60,8 @@ router.post("/log_in", async (req, res) => {
       res.send({
         _id: user._id,
         token: user.token,
-        emil: user.email,
-        account: {
-          username: user.username,
-          phone: user.phone
-        }
+        email: user.email,
+        account: user.account
       });
     } else {
       res.send({
