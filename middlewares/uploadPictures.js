@@ -9,15 +9,9 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const uploadPictures = async (req, res, next) => {
+const uploadPictures = (req, res, next) => {
   let pictures = req.body.pictures;
   let picturesArr = [];
-  const token = req.headers.authorization.replace("Bearer ", "");
-
-  const user = await User.findOne({
-    token: token
-  });
-  const userId = user._id;
 
   if (pictures && pictures.length > 0) {
     pictures.map(picture => {
@@ -25,7 +19,7 @@ const uploadPictures = async (req, res, next) => {
       cloudinary.v2.uploader.upload(
         picture,
         {
-          public_id: `leboncoin-api/userId-${userId}/${random}`
+          public_id: `leboncoin-api/userId-${req.user._id}/${random}`
         },
         (error, result) => {
           // console.log(result, error);

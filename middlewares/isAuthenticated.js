@@ -1,9 +1,9 @@
 const User = require("../models/user");
 
-const isAuthenticated = () => {
+const isAuthenticated = (req, res, next) => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.replace("Bearer ", "");
-    const user = User.findOne(
+    User.findOne(
       {
         token: token
       },

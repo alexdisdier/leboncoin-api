@@ -4,34 +4,35 @@
 
 const express = require("express");
 const router = express.Router();
-
+var isAuthenticated = require("../middlewares/isAuthenticated");
 const uploadPictures = require("../middlewares/uploadPictures");
 
 const Offer = require("../models/offer");
-const User = require("../models/user");
 
 // CREATE
 // params body: title, description, price
-router.post("/publish", uploadPictures, async (req, res) => {
-  try {
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.replace("Bearer ", "");
-      const title = req.body.title;
-      const description = req.body.description;
-      const price = req.body.price;
-      const user = await User.findOne({ token: token });
-      const pictures = req.pictures;
+router.post("/publish", isAuthenticated, uploadPictures, (req, res, next) => {
+  const title = req.body.title;
+  const description = req.body.description;
+  const price = req.body.price;
+  const user = req.user;
+  const pictures = req.pictures;
 
-      const offer = new Offer({
-        title: title,
-        description: description,
-        price: price,
-        pictures: pictures,
-        creator: user
-      });
+  let object = {
+    title: title,
+    description: description,
+    price: price,
+    creator: user
+  };
 
-      await offer.save();
+  if (pictures !== undefined) {
+    object.pictures = req.pictures;
+  }
 
+  const offer = new Offer(object);
+
+  offer.save(function(error) {
+    if (!error) {
       res.send({
         _id: offer._id,
         title: offer.title,
@@ -39,17 +40,15 @@ router.post("/publish", uploadPictures, async (req, res) => {
         price: offer.price,
         pictures: offer.pictures,
         creator: {
-          account: user.account,
-          _id: user._id
+          account: offer.creator.account,
+          _id: offer.creator._id
         },
         created: offer.created
       });
+    } else {
+      return next(error.message);
     }
-  } catch (error) {
-    res.status(400).json({
-      message: error.message
-    });
-  }
+  });
 });
 
 // READ no count
@@ -162,7 +161,7 @@ router.get("/offer/:id", async (req, res) => {
         message: "no offer with this id"
       });
     }
-    console.log(offer);
+    // console.log(offer);
   } catch (error) {
     res.status(400).json({
       error: error.message

@@ -31,11 +31,11 @@ app.get("/", (req, res) => {
   });
 });
 
-const offer = require("./routes/offer");
-const user = require("./routes/user");
+const offerRoutes = require("./routes/offer");
+const userRoutes = require("./routes/user");
 
-app.use(offer);
-app.use(user);
+app.use(offerRoutes);
+app.use(userRoutes);
 
 /////////////////////
 // STARTING SERVER //
