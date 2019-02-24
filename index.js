@@ -34,8 +34,8 @@ app.get("/", (req, res) => {
 const offerRoutes = require("./routes/offer");
 const userRoutes = require("./routes/user");
 
-app.use(offerRoutes);
-app.use(userRoutes);
+app.use("/leboncoin-client", offerRoutes);
+app.use("/leboncoin-client", userRoutes);
 
 /////////////////////
 // STARTING SERVER //
