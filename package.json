@@ -4,10 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "server",
+    "express",
+    "node",
+    "mongoDB",
+    "mongoose"
+  ],
+  "author": "Alex Disdier",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
