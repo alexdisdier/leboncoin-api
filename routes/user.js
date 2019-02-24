@@ -8,7 +8,9 @@ const SHA256 = require("crypto-js/sha256");
 const encBase64 = require("crypto-js/enc-base64");
 const uid2 = require("uid2");
 
+const isAuthenticated = require("../middlewares/isAuthenticated");
 const User = require("../models/user");
+const Offer = require("../models/offer");
 
 // CREATE
 // Params body:
@@ -91,6 +93,31 @@ router.get("/user", async (req, res) => {
         message: "no users in the database"
       });
     }
+  } catch (error) {
+    res.status(400).json({
+      error: error.message
+    });
+  }
+});
+
+// READ no count
+// req.params.userId
+router.get("/profile", isAuthenticated, async (req, res) => {
+  try {
+    offer = await Offer.find({ creator: req.user._id }).populate({
+      path: "creator",
+      model: "User",
+      select: { account: 1 }
+    });
+
+    if (offer) {
+      res.send(offer);
+    } else {
+      res.send({
+        message: "no offer with this id"
+      });
+    }
+    // console.log(offer);
   } catch (error) {
     res.status(400).json({
       error: error.message

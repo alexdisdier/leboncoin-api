@@ -4,9 +4,8 @@
 
 const express = require("express");
 const router = express.Router();
-var isAuthenticated = require("../middlewares/isAuthenticated");
+const isAuthenticated = require("../middlewares/isAuthenticated");
 const uploadPictures = require("../middlewares/uploadPictures");
-var ObjectId = require("mongoose").Types.ObjectId;
 
 const Offer = require("../models/offer");
 
@@ -175,7 +174,7 @@ router.get("/offer/:id", async (req, res) => {
 router.delete("/delete/:id", isAuthenticated, function(req, res, next) {
   Offer.findOneAndDelete(
     {
-      _id: ObjectId(req.params.id),
+      _id: req.params.id,
       creator: req.user
     },
     function(err, obj) {
