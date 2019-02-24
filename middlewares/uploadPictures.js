@@ -12,6 +12,7 @@ cloudinary.config({
 const uploadPictures = (req, res, next) => {
   let pictures = req.body.pictures;
   let picturesArr = [];
+  let pictureUploaded = 0;
 
   if (pictures && pictures.length > 0) {
     pictures.map(picture => {
@@ -27,10 +28,12 @@ const uploadPictures = (req, res, next) => {
             return res.status(500).json({ error });
           }
           picturesArr.push(result);
+          pictureUploaded++;
 
-          req.pictures = picturesArr;
-
-          next();
+          if (pictureUploaded === pictures.length) {
+            req.pictures = picturesArr;
+            next();
+          }
         }
       );
     });
