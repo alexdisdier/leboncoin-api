@@ -98,10 +98,12 @@ router.get("/offer/with-count", function(req, res) {
   }
 
   Offer.count(filter, (err, count) => {
-    const query = Offer.find(filter).populate({
-      path: "creator",
-      select: "account"
-    });
+    const query = Offer.find(filter)
+      .populate({
+        path: "creator",
+        select: "account"
+      })
+      .sort({ created: -1 });
 
     if (req.query.skip !== undefined) {
       query.skip(parseInt(req.query.skip));
