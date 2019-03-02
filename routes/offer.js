@@ -198,25 +198,22 @@ router.post(
   isAuthenticated,
   uploadPictures,
   async (req, res, next) => {
-    const productNum = 1;
+    const productNum = 100;
     try {
-      res.json({
-        message: "faker product"
-      });
-      // for (let i = 0; i < productNum; i++) {
-      //   const offer = new Offer({
-      //     title: faker.fake("{{commerce.productName}}"),
-      //     description: faker.fake("{{hacker.phrase}}"),
-      //     price: faker.fake("{{commerce.price}}"),
-      //     creator: req.user,
-      //     pictures: req.pictures
-      //   });
+      for (let i = 0; i < productNum; i++) {
+        const offer = new Offer({
+          title: faker.fake("{{commerce.productName}}"),
+          description: faker.fake("{{hacker.phrase}}"),
+          price: faker.fake("{{commerce.price}}"),
+          creator: req.user,
+          pictures: req.pictures
+        });
 
-      //   await offer.save();
-      // }
-      // res.json({
-      //   message: `${productNum} products have been created`
-      // });
+        await offer.save();
+      }
+      res.json({
+        message: `${productNum} products have been created`
+      });
     } catch (error) {
       res.status(400).json({
         error: error.message
