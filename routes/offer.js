@@ -74,74 +74,65 @@ router.get("/offer", async (req, res) => {
 
 // READ with count
 // params get: title, priceMin, priceMax, sort (price-desc, pricer-asc, date-desc, date-asc), skip, limit.
-router.get("/offer/with-count", async (req, res) => {
-  try {
-    const count = await Offer.countDocuments();
-
-    if (count > 0) {
-      // Setting up all the filters possible
-      const filters = {};
-
-      if (req.query.title) {
-        filters.title = new RegExp(req.query.title, "i");
-      }
-      if (req.query.priceMin) {
-        filters.price = {
-          $gte: req.query.priceMin
-        };
-      }
-      if (req.query.priceMax) {
-        if (filters.price) {
-          filters.price.$lte = req.query.priceMax;
-        } else {
-          filters.price = {
-            $lte: req.query.priceMax
-          };
-        }
-      }
-
-      const search = await Offer.find(filters)
-        .populate("User")
-        .skip(Number(req.query.skip))
-        .limit(Number(req.query.limit));
-
-      // Sorting the offers
-      if (req.query.sort === "price-asc") {
-        search.sort((a, b) => {
-          return a.price - b.price;
-        });
-      } else if (req.query.sort === "price-desc") {
-        search.sort((a, b) => {
-          return b.price - a.price;
-        });
-      }
-
-      if (req.query.sort === "date-asc") {
-        search.sort((a, b) => {
-          return a.date - b.date;
-        });
-      } else if (req.query.sort === "date-desc") {
-        search.sort((a, b) => {
-          return b.date - a.date;
-        });
-      }
-
-      const offers = await search;
-
-      res.json({
-        count: offers.length,
-        offers: offers
-      });
-    } else {
-      res.send({
-        message: "no offers in database"
-      });
+router.get("/offer/with-count", function(req, res) {
+  const filter = {};
+  if (
+    (req.query.priceMin !== undefined && req.query.priceMin !== "") ||
+    (req.query.priceMax !== undefined && req.query.priceMax !== "")
+  ) {
+    filter.price = {};
+    if (req.query.priceMin) {
+      filter.price["$gte"] = req.query.priceMin;
     }
-  } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
+
+    if (req.query.priceMax) {
+      filter.price["$lte"] = req.query.priceMax;
+    }
   }
+
+  if (req.query.title) {
+    filter.title = {
+      $regex: req.query.title,
+      $options: "i"
+    };
+  }
+
+  Offer.count(filter, (err, count) => {
+    const query = Offer.find(filter).populate({
+      path: "creator",
+      select: "account"
+    });
+
+    if (req.query.skip !== undefined) {
+      query.skip(parseInt(req.query.skip));
+    }
+    if (req.query.limit !== undefined) {
+      query.limit(parseInt(req.query.limit));
+    } else {
+      // valeur par défaut de la limite
+      query.limit(100);
+    }
+
+    switch (req.query.sort) {
+      case "price-desc":
+        query.sort({ price: -1 });
+        break;
+      case "price-asc":
+        query.sort({ price: 1 });
+        break;
+      case "date-desc":
+        query.sort({ created: -1 });
+        break;
+      case "date-asc":
+        query.sort({ created: 1 });
+        break;
+      default:
+    }
+
+    query.exec((err, offers) => {
+      res.json({ count, offers });
+    });
+  });
 });
 
 // READ no count
