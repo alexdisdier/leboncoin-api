@@ -200,20 +200,23 @@ router.post(
   async (req, res, next) => {
     const productNum = 1;
     try {
-      for (let i = 0; i < productNum; i++) {
-        const offer = new Offer({
-          title: faker.fake("{{commerce.productName}}"),
-          description: faker.fake("{{hacker.phrase}}"),
-          price: faker.fake("{{commerce.price}}"),
-          creator: req.user,
-          pictures: req.pictures
-        });
-
-        await offer.save();
-      }
       res.json({
-        message: `${productNum} products have been created`
+        message: "faker product"
       });
+      // for (let i = 0; i < productNum; i++) {
+      //   const offer = new Offer({
+      //     title: faker.fake("{{commerce.productName}}"),
+      //     description: faker.fake("{{hacker.phrase}}"),
+      //     price: faker.fake("{{commerce.price}}"),
+      //     creator: req.user,
+      //     pictures: req.pictures
+      //   });
+
+      //   await offer.save();
+      // }
+      // res.json({
+      //   message: `${productNum} products have been created`
+      // });
     } catch (error) {
       res.status(400).json({
         error: error.message
