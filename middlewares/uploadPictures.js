@@ -2,7 +2,6 @@ const cloudinary = require("cloudinary");
 // source: https://cloudinary.com/documentation/node_image_manipulation
 const User = require("../models/user");
 const uid2 = require("uid2");
-const faker = require("faker");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -11,11 +10,16 @@ cloudinary.config({
 });
 
 const uploadPictures = (req, res, next) => {
-  let pictures = [
-    faker.fake("{{image.image}}"),
-    faker.fake("{{image.image}}"),
-    faker.fake("{{image.image}}")
-  ];
+  let pictures = [];
+  if (req.user._id === "5c7a850dd4bf7a00174c015e") {
+    pictures = [
+      faker.fake("{{image.image}}"),
+      faker.fake("{{image.image}}"),
+      faker.fake("{{image.image}}")
+    ];
+  } else {
+    pictures = req.body.pictures;
+  }
   let picturesArr = [];
   let pictureUploaded = 0;
 
