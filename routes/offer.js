@@ -198,7 +198,7 @@ router.post(
   isAuthenticated,
   uploadPictures,
   async (req, res, next) => {
-    const productNum = 100;
+    const productNum = 1;
     try {
       for (let i = 0; i < productNum; i++) {
         const offer = new Offer({
