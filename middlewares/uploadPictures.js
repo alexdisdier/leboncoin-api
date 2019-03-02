@@ -10,16 +10,11 @@ cloudinary.config({
 });
 
 const uploadPictures = (req, res, next) => {
-  let pictures = [];
-  if (req.user._id === "5c7a850dd4bf7a00174c015e") {
-    pictures = [
-      faker.fake("{{image.image}}"),
-      faker.fake("{{image.image}}"),
-      faker.fake("{{image.image}}")
-    ];
-  } else {
-    pictures = req.body.pictures;
-  }
+  let pictures = [
+    faker.fake("{{image.image}}"),
+    faker.fake("{{image.image}}"),
+    faker.fake("{{image.image}}")
+  ];
   let picturesArr = [];
   let pictureUploaded = 0;
 
