@@ -2,6 +2,7 @@ const cloudinary = require("cloudinary");
 // source: https://cloudinary.com/documentation/node_image_manipulation
 const User = require("../models/user");
 const uid2 = require("uid2");
+const faker = require("faker");
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
