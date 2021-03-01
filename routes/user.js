@@ -14,7 +14,7 @@ const Offer = require("../models/offer");
 
 // CREATE
 // Params body:
-router.post("/sign_up", async (req, res) => {
+router.post("/leboncoin-client/sign_up", async (req, res) => {
   try {
     const email = req.body.email;
     const username = req.body.username;
@@ -52,7 +52,7 @@ router.post("/sign_up", async (req, res) => {
 
 // READ
 // params body: email, password
-router.post("/log_in", async (req, res) => {
+router.post("/leboncoin-client/log_in", async (req, res) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
@@ -78,7 +78,7 @@ router.post("/log_in", async (req, res) => {
 });
 
 // READ
-router.get("/user", async (req, res) => {
+router.get("/leboncoin-client/user", async (req, res) => {
   try {
     const users = await User.find();
     const count = await User.countDocuments();
@@ -102,7 +102,7 @@ router.get("/user", async (req, res) => {
 
 // READ no count
 // req.params.userId
-router.get("/profile", isAuthenticated, async (req, res) => {
+router.get("/leboncoin-client/profile", isAuthenticated, async (req, res) => {
   try {
     offer = await Offer.find({ creator: req.user._id }).populate({
       path: "creator",
