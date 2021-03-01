@@ -12,7 +12,7 @@ const Offer = require("../models/offer");
 
 // CREATE
 // params body: title, description, price
-router.post("/leboncoin-client/publish", isAuthenticated, uploadPictures, (req, res, next) => {
+router.post("/publish", isAuthenticated, uploadPictures, (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
   const price = req.body.price;
@@ -54,7 +54,7 @@ router.post("/leboncoin-client/publish", isAuthenticated, uploadPictures, (req, 
 
 // READ no count
 // params get: id of offer
-router.get("/leboncoin-client/offer", async (req, res) => {
+router.get("/offer", async (req, res) => {
   try {
     const offers = await Offer.find();
 
@@ -74,7 +74,7 @@ router.get("/leboncoin-client/offer", async (req, res) => {
 
 // READ with count
 // params get: title, priceMin, priceMax, sort (price-desc, pricer-asc, date-desc, date-asc), skip, limit.
-router.get("/leboncoin-client/offer/with-count", function(req, res) {
+router.get("/offer/with-count", function(req, res) {
   const filter = {};
   if (
     (req.query.priceMin !== undefined && req.query.priceMin !== "") ||
@@ -139,7 +139,7 @@ router.get("/leboncoin-client/offer/with-count", function(req, res) {
 
 // READ no count
 // req.params.id of offer
-router.get("/leboncoin-client/offer/:id", async (req, res) => {
+router.get("/offer/:id", async (req, res) => {
   try {
     const offerId = req.params.id;
     offer = await Offer.findById(offerId).populate({
@@ -165,7 +165,7 @@ router.get("/leboncoin-client/offer/:id", async (req, res) => {
 
 // DELETE
 // params req.params.id of offer and req.header.authorization (user token)
-router.delete("/leboncoin-client/delete/:id", isAuthenticated, function(req, res, next) {
+router.delete("/delete/:id", isAuthenticated, function(req, res, next) {
   Offer.findOneAndDelete(
     {
       _id: req.params.id,
@@ -187,7 +187,7 @@ router.delete("/leboncoin-client/delete/:id", isAuthenticated, function(req, res
 
 // FAKER ROUTE TO GENERATE DEPARTMENTS
 router.post(
-  "/leboncoin-client/publish-faker",
+  "/publish-faker",
   isAuthenticated,
   uploadPictures,
   async (req, res, next) => {
