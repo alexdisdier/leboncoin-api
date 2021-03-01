@@ -11,7 +11,7 @@ const cors = require("cors");
 app.use(helmet());
 app.use(compression());
 app.use(bodyParser.json({ limit: "10mb" }));
-app.use("/", cors());
+app.use("/leboncoin-client", cors());
 
 /////////////////////////
 // DATABASE CONNECTION //
@@ -25,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URI || `mongodb://localhost/leboncoin`, {
 // ROUTES DECLARATION //
 ////////////////////////
 
-app.get("/", (req, res) => {
+app.get("/leboncoin-client", (req, res) => {
   res.send({
     message: "homepage"
   });
