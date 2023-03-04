@@ -29,7 +29,6 @@ const uploadPictures = (req, res, next) => {
           public_id: `leboncoin-api/userId-${req.user._id}/${random}`
         },
         (error, result) => {
-          // console.log(result, error);
           if (error) {
             return res.status(500).json({ error });
           }
